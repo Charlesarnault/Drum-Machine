@@ -32,12 +32,37 @@ bpm = 240
 playing = True
 active_length = 0
 active_beat = 1
+beat_changed = True
 
 #Other variables
 boxes = []
 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
 
+#Loading sounds
+hi_hat = mixer.Sound('./sounds/hi_hat.WAV')
+snare = mixer.Sound('./sounds/snare.WAV')
+bass = mixer.Sound('./sounds/kick.WAV')
+crash = mixer.Sound('./sounds/crash.wav')
+clap = mixer.Sound('./sounds/clap.wav')
+floor = mixer.Sound('./sounds/tom.WAV')
+
 #Functions
+def play_notes():
+    for i in range(len(clicked)):
+        if clicked[i][active_beat] == 1:
+            if i==0:
+                hi_hat.play()
+            elif i==1:
+                snare.play()
+            elif i==2:
+                bass.play()
+            elif i==3:
+                crash.play()
+            elif i==4:
+                clap.play()
+            elif i==5:
+                floor.play()
+
 def draw_grid(clicks, beat):
     left_box = pygame.draw.rect(screen, gray, [0, 0, 200, HEIGHT - 200], 5)
     bottom_box = pygame.draw.rect(screen, gray, [0, HEIGHT - 200, WIDTH, 200], 5)
@@ -87,7 +112,7 @@ def draw_grid(clicks, beat):
             
             boxes.append((rect, (i,j)))
 
-        active= pygame.draw.rect(screen, cyan, [beat*(WIDTH-200)//beats + 200, 0, ((WIDTH-200)//beats), instruments*100], 5, 3)
+        active = pygame.draw.rect(screen, cyan, [beat*(WIDTH-200)//beats + 200, 0, ((WIDTH-200)//beats), instruments*100], 5, 3)
 
     return boxes
 
@@ -98,6 +123,10 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked, active_beat)
+
+    if beat_changed:
+        play_notes()
+        beat_changed = False
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
