@@ -177,10 +177,26 @@ while run:
     screen.blit(beats_sub_text, (820, HEIGHT - 90))
 
     #Instrument rects
+
     instrument_rects = []
     for i in range(instruments):
         rect = pygame.rect.Rect((0, i*100), (200, 100))
         instrument_rects.append(rect)
+    
+    #Save and Load rects
+
+    save_rect = pygame.draw.rect(screen, gray, [900, HEIGHT-150, 200, 48], 0, 5)
+    save_text = label_font.render('Save', True, white)
+    screen.blit(save_text, (910, HEIGHT-140))
+    load_rect = pygame.draw.rect(screen, gray, [900, HEIGHT-100, 200, 48], 0, 5)
+    load_text = label_font.render('Load', True, white)
+    screen.blit(load_text, (910, HEIGHT-90))
+
+    #Clear board rect
+
+    clear_rect = pygame.draw.rect(screen, gray, [1150, HEIGHT-150, 200, 100], 0, 5)
+    clear_text = label_font.render('Clear board', True, white)
+    screen.blit(clear_text, (1160, HEIGHT-120))
 
     #Playing sounds on beat changes
 
@@ -218,10 +234,14 @@ while run:
                 beats -= 1
                 for i in range(len(clicked)):
                     clicked[i].pop(-1)
+            elif clear_rect.collidepoint(event.pos):
+                clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
             
             for i in range(len(instrument_rects)):
                 if instrument_rects[i].collidepoint(event.pos):
                     active_list[i] *= -1
+            
+
 
     beat_length = 3600/bpm
 

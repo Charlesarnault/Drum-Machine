@@ -6,4 +6,6 @@ This project uses the Pygame library to create a Python playable drum machine. I
 
 ## Getting started
 
-Simply run the `main.py` file and let the music play!
+Do make sure you have installed the Pygame backage - otherwise, running `$ pip install pygame` in your temrinal should do the job.
+
+Once this is done, simply run the `main.py` file and let the music play!
