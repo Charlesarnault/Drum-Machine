@@ -38,6 +38,14 @@ active_length = 0
 active_beat = 1
 beat_changed = True
 active_list = [1 for _ in range(instruments)]
+save_menu = False
+load_menu = False
+
+#Saved beats
+saved_beats = []
+file = open('saved_beats.txt', 'r')
+for line in file:
+    saved_beats.append(line)
 
 #Other variables
 boxes = []
@@ -125,6 +133,20 @@ def draw_grid(clicks, beat, active_instruments):
 
     return boxes
 
+def draw_save_menu():
+    pygame.draw.rect(screen, black, [0, 0, WIDTH, HEIGHT], 0, 0)
+    exit_btn = pygame.draw.rect(screen, gray, [WIDTH-200, HEIGHT-100, 100, 100], 0, 5)
+    exit_text = label_font.render('Close', True, white)
+    screen.blit(exit_text, [WIDTH - 160, HEIGHT-90])
+    return exit_btn
+
+def draw_load_menu():
+    pygame.draw.rect(screen, black, [0, 0, WIDTH, HEIGHT], 0, 0)
+    exit_btn = pygame.draw.rect(screen, gray, [WIDTH-200, HEIGHT-100, 100, 100], 0, 5)
+    exit_text = label_font.render('Close', True, white)
+    screen.blit(exit_text, [WIDTH - 160, HEIGHT-90])
+    return exit_btn
+
 ### Main game loop ###
 
 run = True
@@ -132,6 +154,7 @@ run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
+
     boxes = draw_grid(clicked, active_beat, active_list)
 
     #Lower menu buttons
@@ -198,6 +221,11 @@ while run:
     clear_text = label_font.render('Clear board', True, white)
     screen.blit(clear_text, (1160, HEIGHT-120))
 
+    if save_menu:
+        exit_rect = draw_save_menu()
+    elif load_menu:
+        exit_rect = draw_load_menu()
+
     #Playing sounds on beat changes
 
     if beat_changed:
@@ -216,7 +244,7 @@ while run:
                     coords = box[1]
                     clicked[coords[1]][coords[0]] *= -1
 
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONUP and not save_menu and not load_menu:
             if play_pause_btn.collidepoint(event.pos):
                 if playing:
                     playing = False
@@ -236,11 +264,22 @@ while run:
                     clicked[i].pop(-1)
             elif clear_rect.collidepoint(event.pos):
                 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
-            
+            elif save_rect.collidepoint(event.pos):
+                save_menu = True
+                #playing = False
+            elif load_rect.collidepoint(event.pos):
+                load_menu = True
+                #playing = False
+
             for i in range(len(instrument_rects)):
                 if instrument_rects[i].collidepoint(event.pos):
                     active_list[i] *= -1
             
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if exit_rect.collidepoint(event.pos):
+                save_menu = False
+                load_menu = False
+                playing = True
 
 
     beat_length = 3600/bpm
